@@ -3,8 +3,12 @@ package com.example.test.MaerskTest.Entity;
 import org.springframework.data.cassandra.core.mapping.PrimaryKey;
 import org.springframework.data.cassandra.core.mapping.Table;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 @Table
 public class Bookings {
+
+    private static final AtomicInteger count = new AtomicInteger(000001);
 
     @PrimaryKey
     private String id;
@@ -17,6 +21,7 @@ public class Bookings {
     private String timestamp;
 
     public Bookings() {
+        this.id = this.incCount();
     }
 
     public Bookings(String id, int container_Size, String container_Type, String origin, String destination, int quantity, String timestamp) {
@@ -84,4 +89,10 @@ public class Bookings {
     public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
     }
+
+    public String incCount(){
+        String init = "957";
+        return init.concat(Integer.toString(count.incrementAndGet()));
+    }
+
 }

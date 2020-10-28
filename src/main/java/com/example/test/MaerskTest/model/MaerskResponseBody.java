@@ -21,6 +21,9 @@ public class MaerskResponseBody {
         this.bookingRef = bookingRef;
     }
 
+    public MaerskResponseBody(boolean b) {
+    }
+
     public String getExceptionMessage() {
         return exceptionMessage;
     }

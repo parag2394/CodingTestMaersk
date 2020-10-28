@@ -9,6 +9,7 @@ import com.example.test.MaerskTest.model.MaerskServiceResponseBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,10 @@ public class MaerskServiceImpl implements MaerskService {
     @Autowired
     MaerskRepository maerskRepository;
 
+    @Value("${url.external.service}")
+    private String uri;
+
+
     @Bean
     public RestTemplate restTemplate() {
         return new RestTemplate();
@@ -37,8 +42,6 @@ public class MaerskServiceImpl implements MaerskService {
 
         MaerskResponseBody maerskResponseBody = new MaerskResponseBody();
         maerskResponseBody.setAvailable(true);
-
-        final String uri = "https://maersk.com/api/bookings/checkAvailable";
 
         try {
             HttpHeaders headers = new HttpHeaders();
@@ -68,8 +71,6 @@ public class MaerskServiceImpl implements MaerskService {
             //   save in Cassandra table 'Bookings'
             Bookings bookings = new Bookings();
 
-            // set primary key as '957xxxxxx' and increment 1
-            bookings.setId("957000001");
             bookings.setContainer_Size(maerskRequestBody.getContainerSize());
             bookings.setContainer_Type(String.valueOf(ContainerType.valueOf(maerskRequestBody.getContainerType().toString())));
             bookings.setDestination(maerskRequestBody.getDestination());
@@ -78,7 +79,7 @@ public class MaerskServiceImpl implements MaerskService {
             bookings.setTimestamp(maerskRequestBody.getTimestamp());
 
             Bookings _booking = maerskRepository.save(bookings);
-            maerskResponseBody.setBookingRef(_booking.getId());
+            maerskResponseBody.setBookingRef((_booking.getId()));
         }
         catch (Exception e){
             logger.error("Exception : " , e.getMessage());
